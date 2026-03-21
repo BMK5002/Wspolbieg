@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "View": {
+      "commandName": "Project"
+    },
+    "Tests": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\pawta\\source\\r\\Wspolbiegi\\Tests"
+    }
+  }
+}
