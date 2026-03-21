@@ -2,30 +2,30 @@
 {
     public class Calculator
     {
-        private int value1;
-        private int value2;
-        public Calculator(int value1, int value2)
+        private double value1;
+        private double value2;
+        public Calculator(double value1, double value2)
         {
             this.value1 = value1;
             this.value2 = value2;
         }
 
-        public int add()
+        public double add()
         {
             return value1 + value2;
         }
 
-        public int substract()
+        public double substract()
         {
             return value1 - value2;
         }
 
-        public int multiply()
+        public double multiply()
         {
             return value1 * value2;
         }
 
-        public int divide()
+        public double divide()
         {
             if (value2 == 0)
             {
@@ -34,12 +34,12 @@
             return value1 / value2;
         }
 
-        public void setValue1(int value)
+        public void setValue1(double value)
         {
             value1 = value;
         }
 
-        public void setValue2(int value)
+        public void setValue2(double value)
         { 
             value2 = value;
         }
