@@ -2,5 +2,5 @@
   <Project Path="Data/Data.csproj" />
   <Project Path="Model/Model.csproj" />
   <Project Path="Tests/Tests.csproj" />
-  <Project Path="View1/View.csproj" Id="93e99666-c914-4c9c-a4e0-b0440c46ee5b" />
+  <Project Path="View2/View.csproj" Id="ff5c31e7-4325-477c-8faa-153ff30a3f23" />
 </Solution>
