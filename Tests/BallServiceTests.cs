@@ -9,12 +9,12 @@ namespace BallServiceTests
         public void BallMoveTest()
         {
             var service = new BallService();
-            var Ball = new Ball { X = 10, Y = 10, VelocityX = 1, VelocityY = 1 };
+            var ball = new Ball { X = 10, Y = 10, VelocityX = 1, VelocityY = 1 };
 
-            service.Update(Ball, 100, 100);
+            service.Update(ball, 100, 100);
 
-            Assert.Equal(11, Ball.X);
-            Assert.Equal(11, Ball.Y);
+            Assert.Equal(11, ball.X);
+            Assert.Equal(11, ball.Y);
         }
     }
 }

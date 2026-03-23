@@ -4,16 +4,16 @@ namespace Model
 {
     public class BallService : IBallService
     {
-        public void Update(Ball Ball, double width, double height)
+        public void Update(Ball ball, double width, double height)
         {
-            Ball.X += Ball.VelocityX;
-            Ball.Y += Ball.VelocityY;
+            ball.X += ball.VelocityX;
+            ball.Y += ball.VelocityY;
 
-            if (Ball.X < 0 || Ball.X > width)
-                Ball.VelocityX *= -1;
+            if (ball.X < 0 || ball.X > width)
+                ball.VelocityX *= -1;
 
-            if (Ball.Y < 0 || Ball.Y > height)
-                Ball.VelocityY *= -1;
+            if (ball.Y < 0 || ball.Y > height)
+                ball.VelocityY *= -1;
         }
     }
 }

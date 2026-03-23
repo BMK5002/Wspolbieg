@@ -4,6 +4,6 @@ namespace Model
 {
     public interface IBallService
     {
-        void Update(Ball Ball, double width, double height);
+        void Update(Ball ball, double width, double height);
     }
 }

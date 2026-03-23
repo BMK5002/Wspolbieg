@@ -6,7 +6,7 @@ namespace BallTests {
         [Fact]
         public void BallValuesTest()
         {
-            var Ball = new Ball
+            var ball = new Ball
             {
                 X = 10,
                 Y = 20,
@@ -14,25 +14,25 @@ namespace BallTests {
                 VelocityY = -2.5
             };
 
-            Assert.Equal(10, Ball.X);
-            Assert.Equal(20, Ball.Y);
-            Assert.Equal(1.5, Ball.VelocityX);
-            Assert.Equal(-2.5, Ball.VelocityY);
+            Assert.Equal(10, ball.X);
+            Assert.Equal(20, ball.Y);
+            Assert.Equal(1.5, ball.VelocityX);
+            Assert.Equal(-2.5, ball.VelocityY);
         }
 
         [Fact]
         public void BallSetterTest()
         {
-            var Ball = new Ball();
+            var ball = new Ball();
 
-            Ball.X = 5;
-            Ball.Y = 6;
+            ball.X = 5;
+            ball.Y = 6;
 
-            Ball.X = 15;
-            Ball.Y = 16;
+            ball.X = 15;
+            ball.Y = 16;
 
-            Assert.Equal(15, Ball.X);
-            Assert.Equal(16, Ball.Y);
+            Assert.Equal(15, ball.X);
+            Assert.Equal(16, ball.Y);
         }
     }
 }
