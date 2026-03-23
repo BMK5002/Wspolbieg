@@ -5,27 +5,27 @@ namespace Data
 {
     public class Ball : INotifyPropertyChanged
     {
-        private double _x;
-        private double _y;
+        private double x;
+        private double y;
 
         public double X
         {
-            get => _x;
+            get => x;
             set
             {
-                if (_x == value) return;
-                _x = value;
+                if (x == value) return;
+                x = value;
                 OnPropertyChanged();
             }
         }
 
         public double Y
         {
-            get => _y;
+            get => y;
             set
             {
-                if (_y == value) return;
-                _y = value;
+                if (y == value) return;
+                y = value;
                 OnPropertyChanged();
             }
         }
