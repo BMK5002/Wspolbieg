@@ -27,7 +27,8 @@ namespace View.ViewModel
                     X = rand.Next(0, 400),
                     Y = rand.Next(0, 300),
                     VelocityX = rand.NextDouble() * 4 - 2,
-                    VelocityY = rand.NextDouble() * 4 - 2
+                    VelocityY = rand.NextDouble() * 4 - 2,
+                    R = 5
                 });
             }
 
