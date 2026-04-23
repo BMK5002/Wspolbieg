@@ -7,6 +7,7 @@ namespace Data
     {
         private double x;
         private double y;
+        private double r;
 
         public double X
         {
@@ -26,6 +27,17 @@ namespace Data
             {
                 if (y == value) return;
                 y = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double R
+        {
+            get => r;
+            set
+            {
+                if (r == value) return;
+                r = value;
                 OnPropertyChanged();
             }
         }
