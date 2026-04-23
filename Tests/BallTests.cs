@@ -11,13 +11,15 @@ namespace BallTests {
                 X = 10,
                 Y = 20,
                 VelocityX = 1.5,
-                VelocityY = -2.5
+                VelocityY = -2.5,
+                R = 5
             };
 
             Assert.Equal(10, ball.X);
             Assert.Equal(20, ball.Y);
             Assert.Equal(1.5, ball.VelocityX);
             Assert.Equal(-2.5, ball.VelocityY);
+            Assert.Equal(5, ball.R);
         }
 
         [Fact]
@@ -31,8 +33,11 @@ namespace BallTests {
             ball.X = 15;
             ball.Y = 16;
 
+            ball.R = 10;
+
             Assert.Equal(15, ball.X);
             Assert.Equal(16, ball.Y);
+            Assert.Equal(10, ball.R);
         }
     }
 }
