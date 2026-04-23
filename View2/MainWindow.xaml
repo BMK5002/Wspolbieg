@@ -6,8 +6,20 @@
         xmlns:local="clr-namespace:View2"
         mc:Ignorable="d"
         Title="Kulki" Height="350" Width="500">
-    <Canvas Width="{Binding Width}" Height="{Binding Height}" Background="Black">
-        <ItemsControl ItemsSource="{Binding Balls}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Margin="4">
+            <TextBlock VerticalAlignment="Center" Foreground="Black">Liczba piłek:</TextBlock>
+            <TextBox Width="60" Margin="6,0" Text="{Binding BallCount, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Content="Start" Command="{Binding StartCommand}" />
+        </StackPanel>
+
+        <Canvas Grid.Row="1" Width="{Binding Width}" Height="{Binding Height}" Background="Black">
+            <ItemsControl ItemsSource="{Binding Balls}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Ellipse Width="10" Height="10" Fill="White"/>
@@ -27,5 +39,6 @@
                 </Style>
             </ItemsControl.ItemContainerStyle>
         </ItemsControl>
-    </Canvas>
+        </Canvas>
+    </Grid>
 </Window>
