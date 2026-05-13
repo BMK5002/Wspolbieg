@@ -9,25 +9,27 @@ namespace Model
             ball.X += ball.VelocityX;
             ball.Y += ball.VelocityY;
 
-            if (ball.X < 0)
+            if (ball.X - ball.R < 0)
             {
-                ball.X = 0;
-                ball.VelocityX *= -1;
-            }
-            else if (ball.X + 2 * ball.R > width)
-            {
-                ball.X = width - 2 * ball.R;
+                ball.X = ball.R;
                 ball.VelocityX *= -1;
             }
 
-            if (ball.Y < 0)
+            if (ball.X + ball.R > width)
             {
-                ball.Y = 0;
+                ball.X = width - ball.R;
+                ball.VelocityX *= -1;
+            }
+
+            if (ball.Y - ball.R < 0)
+            {
+                ball.Y = ball.R;
                 ball.VelocityY *= -1;
             }
-            else if (ball.Y + 2 * ball.R > height)
+
+            if (ball.Y + ball.R > height)
             {
-                ball.Y = height - 2 * ball.R;
+                ball.Y = height - ball.R;
                 ball.VelocityY *= -1;
             }
         }

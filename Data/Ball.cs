@@ -17,6 +17,7 @@ namespace Data
                 if (x == value) return;
                 x = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(DrawX));
             }
         }
 
@@ -28,6 +29,7 @@ namespace Data
                 if (y == value) return;
                 y = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(DrawY));
             }
         }
 
@@ -39,8 +41,13 @@ namespace Data
                 if (r == value) return;
                 r = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(DrawX));
+                OnPropertyChanged(nameof(DrawY));
             }
         }
+
+        public double DrawX => X - R;
+        public double DrawY => Y - R;
 
         public double VelocityX { get; set; }
         public double VelocityY { get; set; }

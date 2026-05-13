@@ -34,8 +34,8 @@
 
             <ItemsControl.ItemContainerStyle>
                 <Style>
-                    <Setter Property="Canvas.Left" Value="{Binding X}"/>
-                    <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                    <Setter Property="Canvas.Left" Value="{Binding DrawX}"/>
+                    <Setter Property="Canvas.Top" Value="{Binding DrawY}"/>
                 </Style>
             </ItemsControl.ItemContainerStyle>
         </ItemsControl>

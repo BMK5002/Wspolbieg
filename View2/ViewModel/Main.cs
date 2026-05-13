@@ -57,6 +57,7 @@ namespace View.ViewModel
                     VelocityY = rand.NextDouble() * 4 - 2,
                     R = 5
                 });
+
             }
 
             _timer.Start();
