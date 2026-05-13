@@ -5,15 +5,18 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using Data;
 using Model;
+using View2;
 
 namespace View.ViewModel
 {
     public class MainViewModel : INotifyPropertyChanged
     {
         private readonly IBallService _BallService;
-        private readonly DispatcherTimer _timer;
+        private bool running;
+        private readonly object _lock = new object();
 
-        public ObservableCollection<Ball> Balls { get; } = new();
+        public ObservableCollection<Ball> Balls { get; } = new(); // For UI binding
+        private readonly List<Ball> simulationBalls = new();  // For simulation logic
 
         public double Width { get; set; } = 400;
         public double Height { get; set; } = 300;
@@ -36,36 +39,52 @@ namespace View.ViewModel
         {
             _BallService = BallService;
 
-            _timer = new DispatcherTimer();
-            _timer.Interval = TimeSpan.FromMilliseconds(50);
-            _timer.Tick += (s, e) => Update();
+            
 
             StartCommand = new RelayCommand(_ => Start());
         }
 
         private void Start()
         {
-            Balls.Clear();
+            simulationBalls.Clear();
             var rand = new Random();
             for (int i = 0; i < BallCount; i++)
             {
-                Balls.Add(new Ball
+                simulationBalls.Add(new Ball
                 {
                     X = rand.Next(0, (int)Width),
                     Y = rand.Next(0, (int)Height),
                     VelocityX = rand.NextDouble() * 4 - 2,
                     VelocityY = rand.NextDouble() * 4 - 2,
                     R = 5
-                });
-
+                }); 
             }
 
-            _timer.Start();
+            running = true;
+            _ = RunLoop();
         }
 
-        private void Update()
+        private async Task RunLoop()
         {
-           _BallService.Update(Balls, Width, Height);
+            while (running)
+            {
+                List<Ball> snapshot;
+                lock (_lock)  // Ensure thread safety when updating the simulation
+                {
+                    _BallService.Update(simulationBalls, Width, Height);
+                    snapshot = simulationBalls.ToList();  // Create a snapshot for UI update
+                }
+
+                App.Current.Dispatcher.Invoke(() =>  // Update the UI with the snapshot
+                {
+                    Balls.Clear();
+                    foreach (var ball in snapshot)
+                    {
+                        Balls.Add(ball);
+                    }
+                });
+                await Task.Delay(16);
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
