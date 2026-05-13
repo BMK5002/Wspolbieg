@@ -65,10 +65,7 @@ namespace View.ViewModel
 
         private void Update()
         {
-            foreach (var Ball in Balls)
-            {
-                _BallService.Update(Ball, Width, Height);
-            }
+           _BallService.Update(Balls, Width, Height);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

@@ -4,7 +4,6 @@ namespace Model
 {
     public interface IBallService
     {
-        void Update( IEnumerable<IBall> balls, double width, double height);
-        IBall Create(double x, double y, double r, double velocityX, double velocityY);
+        void Update( IEnumerable<Ball> balls, double width, double height);
     }
 }

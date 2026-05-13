@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Data
 {
-    public class Ball : IBall, INotifyPropertyChanged
+    public class Ball : INotifyPropertyChanged
     {
         private double x;
         private double y;
