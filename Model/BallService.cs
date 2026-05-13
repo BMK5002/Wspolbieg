@@ -4,7 +4,19 @@ namespace Model
 {
     public class BallService : IBallService
     {
-        public void Update( IEnumerable<Ball> balls, double width, double height)
+
+        public IBall Create(double x, double y, double r, double velocityX, double velocityY)
+        {
+            return new Ball
+            {
+                X = x,
+                Y = y,
+                R = r,
+                VelocityX = velocityX,
+                VelocityY = velocityY
+            };
+        }
+        public void Update( IEnumerable<IBall> balls, double width, double height)
         {
             foreach (var ball in balls)
             {
