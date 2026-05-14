@@ -9,6 +9,8 @@ namespace Data
         private double y;
         private double r;
 
+        public const double InitialMomentum = 100.0;
+
         public double X
         {
             get => x;
@@ -51,6 +53,35 @@ namespace Data
 
         public double VelocityX { get; set; }
         public double VelocityY { get; set; }
+
+        /// <summary>
+        /// Mass calculated from radius: m = π * r²
+        /// </summary>
+        public double Mass => Math.PI * R * R;
+
+        public Ball()
+        {
+        }
+
+        /// <summary>
+        /// Creates a ball with the specified radius and initial velocity based on momentum conservation.
+        /// </summary>
+        /// <param name="radius">Ball radius (determines mass: m = π * r²)</param>
+        /// <param name="x">Initial X position</param>
+        /// <param name="y">Initial Y position</param>
+        /// <param name="velocityAngle">Initial velocity direction in radians (0 = right, π/2 = down)</param>
+        public Ball(double radius, double x = 0, double y = 0, double velocityAngle = 0)
+        {
+            R = radius;
+            X = x;
+            Y = y;
+
+            double mass = Math.PI * radius * radius;
+            double speed = InitialMomentum / mass;
+
+            VelocityX = speed * Math.Cos(velocityAngle);
+            VelocityY = speed * Math.Sin(velocityAngle);
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

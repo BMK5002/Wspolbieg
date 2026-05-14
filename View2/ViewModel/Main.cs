@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
-using System.Windows.Threading;
 using Data;
 using Model;
 using View2;
@@ -50,14 +48,13 @@ namespace View.ViewModel
             var rand = new Random();
             for (int i = 0; i < BallCount; i++)
             {
-                simulationBalls.Add(new Ball
-                {
-                    X = rand.Next(0, (int)Width),
-                    Y = rand.Next(0, (int)Height),
-                    VelocityX = rand.NextDouble() * 4 - 2,
-                    VelocityY = rand.NextDouble() * 4 - 2,
-                    R = 5
-                }); 
+                double radius = rand.NextDouble() * 5.0 + 3.0;
+
+                double x = rand.Next((int)(radius + 1), (int)(Width - radius - 1));
+                double y = rand.Next((int)(radius + 1), (int)(Height - radius - 1));
+                double velocityAngle = rand.NextDouble() * 2 * Math.PI;
+
+                simulationBalls.Add(new Ball(radius, x, y, velocityAngle));
             }
 
             running = true;

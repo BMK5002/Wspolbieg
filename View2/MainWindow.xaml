@@ -4,8 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View2"
+        xmlns:converters="clr-namespace:View2.Converters"
         mc:Ignorable="d"
         Title="Kulki" Height="350" Width="500">
+    <Window.Resources>
+        <converters:DoubleTo2xConverter x:Key="DoubleTo2xConverter"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -22,7 +26,9 @@
             <ItemsControl ItemsSource="{Binding Balls}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Ellipse Width="10" Height="10" Fill="White"/>
+                    <Ellipse Width="{Binding R, Converter={StaticResource DoubleTo2xConverter}}" 
+                             Height="{Binding R, Converter={StaticResource DoubleTo2xConverter}}" 
+                             Fill="White"/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
 
