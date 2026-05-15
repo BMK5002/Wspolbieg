@@ -8,17 +8,16 @@ namespace Model
         {
             var ballList = balls.ToList();
 
-            // Step 1: Update positions using semi-implicit Euler (dt = 1.0)
+            // Update positions
             foreach (var ball in ballList)
             {
                 ball.X += ball.VelocityX;
                 ball.Y += ball.VelocityY;
             }
 
-            // Step 2: Handle wall collisions (elastic bouncing)
+            // Handle wall collisions
             foreach (var ball in ballList)
             {
-                // Left and right walls
                 if (ball.X - ball.R < 0)
                 {
                     ball.X = ball.R;
@@ -31,7 +30,6 @@ namespace Model
                     ball.VelocityX *= -1;
                 }
 
-                // Top and bottom walls
                 if (ball.Y - ball.R < 0)
                 {
                     ball.Y = ball.R;
@@ -45,7 +43,7 @@ namespace Model
                 }
             }
 
-            // Step 3: Ball-to-ball collision detection and response
+            // Handle ball collisions
             for (int i = 0; i < ballList.Count; i++)
             {
                 for (int j = i + 1; j < ballList.Count; j++)
@@ -55,7 +53,7 @@ namespace Model
 
                     double distance = Physics.GetDistance(a, b);
 
-                    // Skip if distance is zero (shouldn't happen, but safety check)
+                    // Skip if distance is zero
                     if (distance < 1e-10)
                     {
                         continue;
@@ -64,10 +62,8 @@ namespace Model
                     // Check if balls are colliding
                     if (distance <= a.R + b.R)
                     {
-                        // Resolve the elastic collision (impulse-based)
                         Physics.ResolveElasticCollision(a, b);
 
-                        // Separate overlapping balls to prevent sticking
                         Physics.SeparateOverlappingBalls(a, b);
                     }
                 }

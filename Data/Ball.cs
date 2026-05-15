@@ -54,22 +54,12 @@ namespace Data
         public double VelocityX { get; set; }
         public double VelocityY { get; set; }
 
-        /// <summary>
-        /// Mass calculated from radius: m = π * r²
-        /// </summary>
         public double Mass => Math.PI * R * R;
 
         public Ball()
         {
         }
 
-        /// <summary>
-        /// Creates a ball with the specified radius and initial velocity based on momentum conservation.
-        /// </summary>
-        /// <param name="radius">Ball radius (determines mass: m = π * r²)</param>
-        /// <param name="x">Initial X position</param>
-        /// <param name="y">Initial Y position</param>
-        /// <param name="velocityAngle">Initial velocity direction in radians (0 = right, π/2 = down)</param>
         public Ball(double radius, double x = 0, double y = 0, double velocityAngle = 0)
         {
             R = radius;
