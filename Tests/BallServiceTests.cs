@@ -40,8 +40,8 @@ namespace BallServiceTests
 
             service.Update(new[] { ball }, 100, 100);
 
-            Assert.Equal(95, ball.X);  // width - R = 100 - 5 = 95
-            Assert.Equal(95, ball.Y);  // height - R = 100 - 5 = 95
+            Assert.Equal(95, ball.X);
+            Assert.Equal(95, ball.Y);
             Assert.Equal(-10, ball.VelocityX);
             Assert.Equal(-10, ball.VelocityY);
         }
