@@ -12,6 +12,7 @@ namespace View.ViewModel
         private readonly IBallService _BallService;
         private bool running;
         private readonly object _lock = new object();
+        private Task? _loopTask;
 
         public ObservableCollection<Ball> Balls { get; } = new(); // For UI binding
         private readonly List<Ball> simulationBalls = new();  // For simulation logic
@@ -36,14 +37,17 @@ namespace View.ViewModel
         public MainViewModel(IBallService BallService)
         {
             _BallService = BallService;
-
-            
-
-            StartCommand = new RelayCommand(_ => Start());
+            StartCommand = new RelayCommand(async _ => await Start());
         }
 
-        private void Start()
+        private async Task Start()
         {
+            running = false; // Stop any existing simulation
+            if (_loopTask != null)
+            {
+                await _loopTask; // Wait for the existing loop to finish
+            }
+            Balls.Clear();
             simulationBalls.Clear();
             var rand = new Random();
             for (int i = 0; i < BallCount; i++)
@@ -58,7 +62,7 @@ namespace View.ViewModel
             }
 
             running = true;
-            _ = RunLoop();
+            _loopTask = RunLoop();
         }
 
         private async Task RunLoop()
@@ -72,7 +76,7 @@ namespace View.ViewModel
                     snapshot = simulationBalls.ToList();  // Create a snapshot for UI update
                 }
 
-                App.Current.Dispatcher.Invoke(() =>  // Update the UI with the snapshot
+                await App.Current.Dispatcher.InvokeAsync(() =>  // Update the UI with the snapshot
                 {
                     Balls.Clear();
                     foreach (var ball in snapshot)
