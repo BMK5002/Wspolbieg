@@ -63,7 +63,7 @@ namespace PhysicsTests
         }
 
         [Fact]
-        public void bopyConstructorTest()
+        public void copyConstructorTest()
         {
             var original = new Ball(5.0, 10.0, 20.0, Math.PI / 3);
 

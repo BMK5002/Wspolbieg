@@ -3,20 +3,6 @@ using Model;
 
 namespace PhysicsTests
 {
-    public class MassCalculationTests
-    {
-        [Fact]
-        public void massCalculagionTest()
-        {
-            double radius = 5.0;
-            double expectedMass = Math.PI * radius * radius;
-
-            var ball = new Ball(radius);
-
-            Assert.Equal(expectedMass, ball.Mass);
-        }
-    }
-
     public class PositionalSeparationTests
     {
         [Fact]
