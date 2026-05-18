@@ -4,7 +4,7 @@ namespace Model
 {
     public class BallService : IBallService
     {
-        public void Update(IEnumerable<Ball> balls, double width, double height)
+        public void Update(IEnumerable<IBall> balls, double width, double height)
         {
             var ballList = balls.ToList();
 
@@ -48,8 +48,8 @@ namespace Model
             {
                 for (int j = i + 1; j < ballList.Count; j++)
                 {
-                    Ball a = ballList[i];
-                    Ball b = ballList[j];
+                    IBall a = ballList[i];
+                    IBall b = ballList[j];
 
                     double distance = Physics.GetDistance(a, b);
 
@@ -68,6 +68,21 @@ namespace Model
                     }
                 }
             }
+        }
+
+        public IEnumerable<IBall> CreateBalls(int ballCount)
+        {
+            var rand = new Random();
+            var balls = new List<IBall>();
+            for (int i = 0; i < ballCount; i++)
+            {
+                double radius = rand.NextDouble() * 5.0 + 3.0;
+                double x = rand.Next((int)(radius + 1), (int)(800 - radius - 1));
+                double y = rand.Next((int)(radius + 1), (int)(600 - radius - 1));
+                double velocityAngle = rand.NextDouble() * 2 * Math.PI;
+                balls.Add(new Ball(radius, x, y, velocityAngle));
+            }
+            return balls;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Input;
 using Data;
 using Model;
@@ -14,8 +15,8 @@ namespace View.ViewModel
         private readonly object _lock = new object();
         private Task? _loopTask;
 
-        public ObservableCollection<Ball> Balls { get; } = new(); // For UI binding
-        private readonly List<Ball> simulationBalls = new();  // For simulation logic
+        public ObservableCollection<IBall> Balls { get; } = new(); // For UI binding
+        private List<IBall> simulationBalls = new();  // For simulation logic
 
         public double Width { get; set; } = 400;
         public double Height { get; set; } = 300;
@@ -50,16 +51,7 @@ namespace View.ViewModel
             Balls.Clear();
             simulationBalls.Clear();
             var rand = new Random();
-            for (int i = 0; i < BallCount; i++)
-            {
-                double radius = rand.NextDouble() * 5.0 + 3.0;
-
-                double x = rand.Next((int)(radius + 1), (int)(Width - radius - 1));
-                double y = rand.Next((int)(radius + 1), (int)(Height - radius - 1));
-                double velocityAngle = rand.NextDouble() * 2 * Math.PI;
-
-                simulationBalls.Add(new Ball(radius, x, y, velocityAngle));
-            }
+            simulationBalls = _BallService.CreateBalls(BallCount).ToList();
 
             running = true;
             _loopTask = RunLoop();
@@ -69,12 +61,12 @@ namespace View.ViewModel
         {
             while (running)
             {
-                List<Ball> snapshot;
+                List<IBall> snapshot;
                 lock (_lock)  // Ensure thread safety when updating the simulation
                 {
                     _BallService.Update(simulationBalls, Width, Height);
-                    snapshot = simulationBalls.ToList();  // Create a snapshot for UI update
-                }
+                    snapshot = simulationBalls.Select(b => (IBall)new Ball(b)).ToList(); // Create a snapshot for UI update
+                }   
 
                 await App.Current.Dispatcher.InvokeAsync(() =>  // Update the UI with the snapshot
                 {

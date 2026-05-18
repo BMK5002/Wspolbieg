@@ -4,14 +4,14 @@ namespace Model
 {
     public static class Physics
     {
-        public static double GetDistance(Ball a, Ball b)
+        public static double GetDistance(IBall a, IBall b)
         {
             double dx = a.X - b.X;
             double dy = a.Y - b.Y;
             return Math.Sqrt(dx * dx + dy * dy);
         }
 
-        public static void ResolveElasticCollision(Ball a, Ball b)
+        public static void ResolveElasticCollision(IBall a, IBall b)
         {
             double dx = a.X - b.X;
             double dy = a.Y - b.Y;
@@ -47,7 +47,7 @@ namespace Model
             b.VelocityY -= (impulse / massB) * ny;
         }
 
-        public static void SeparateOverlappingBalls(Ball a, Ball b)
+        public static void SeparateOverlappingBalls(IBall a, IBall b)
         {
             double dx = a.X - b.X;
             double dy = a.Y - b.Y;

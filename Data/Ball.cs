@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Data
 {
-    public class Ball : INotifyPropertyChanged
+    public class Ball : IBall, INotifyPropertyChanged
     {
         private double x;
         private double y;
@@ -71,6 +71,16 @@ namespace Data
 
             VelocityX = speed * Math.Cos(velocityAngle);
             VelocityY = speed * Math.Sin(velocityAngle);
+        }
+
+        // Konstruktor kopiujący
+        public Ball(IBall other)
+        {
+            X = other.X;
+            Y = other.Y;
+            R = other.R;
+            VelocityX = other.VelocityX;
+            VelocityY = other.VelocityY;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
