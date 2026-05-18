@@ -12,7 +12,6 @@ namespace View.ViewModel
     {
         private readonly IBallService _BallService;
         private bool running;
-        private readonly object _lock = new object();
         private Task? _loopTask;
 
         public ObservableCollection<IBall> Balls { get; } = new(); // For UI binding
@@ -54,19 +53,19 @@ namespace View.ViewModel
             simulationBalls = _BallService.CreateBalls(BallCount).ToList();
 
             running = true;
-            _loopTask = RunLoop();
+            _loopTask = Task.Run(RunLoop);
         }
 
         private async Task RunLoop()
         {
             while (running)
             {
+                if (App.Current == null)
+                    return;
+
                 List<IBall> snapshot;
-                lock (_lock)  // Ensure thread safety when updating the simulation
-                {
-                    _BallService.Update(simulationBalls, Width, Height);
-                    snapshot = simulationBalls.Select(b => (IBall)new Ball(b)).ToList(); // Create a snapshot for UI update
-                }   
+                _BallService.Update(simulationBalls, Width, Height);
+                snapshot = simulationBalls.Select(b => (IBall)new Ball(b)).ToList(); // Create a snapshot for UI update 
 
                 await App.Current.Dispatcher.InvokeAsync(() =>  // Update the UI with the snapshot
                 {

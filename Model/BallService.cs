@@ -4,67 +4,80 @@ namespace Model
 {
     public class BallService : IBallService
     {
+        private readonly object _lock = new();
         public void Update(IEnumerable<IBall> balls, double width, double height)
         {
             var ballList = balls.ToList();
+            List<(IBall ball, double x, double y, double vx, double vy)> results;
 
-            // Update positions
-            foreach (var ball in ballList)
-            {
-                ball.X += ball.VelocityX;
-                ball.Y += ball.VelocityY;
-            }
-
-            // Handle wall collisions
-            foreach (var ball in ballList)
-            {
-                if (ball.X - ball.R < 0)
+            // Concurrently calculate new positions and velocities for each ball, handling wall collisions
+            results = ballList
+                .AsParallel()
+                .Select(ball =>
                 {
-                    ball.X = ball.R;
-                    ball.VelocityX *= -1;
-                }
+                    double x = ball.X + ball.VelocityX;
+                    double y = ball.Y + ball.VelocityY;
+                    double vx = ball.VelocityX;
+                    double vy = ball.VelocityY;
 
-                if (ball.X + ball.R > width)
-                {
-                    ball.X = width - ball.R;
-                    ball.VelocityX *= -1;
-                }
-
-                if (ball.Y - ball.R < 0)
-                {
-                    ball.Y = ball.R;
-                    ball.VelocityY *= -1;
-                }
-
-                if (ball.Y + ball.R > height)
-                {
-                    ball.Y = height - ball.R;
-                    ball.VelocityY *= -1;
-                }
-            }
-
-            // Handle ball collisions
-            for (int i = 0; i < ballList.Count; i++)
-            {
-                for (int j = i + 1; j < ballList.Count; j++)
-                {
-                    IBall a = ballList[i];
-                    IBall b = ballList[j];
-
-                    double distance = Physics.GetDistance(a, b);
-
-                    // Skip if distance is zero
-                    if (distance < 1e-10)
-                    {
-                        continue;
+                    if (x - ball.R < 0)
+                    { 
+                        x = ball.R; vx *= -1;
+                    }
+                    if (x + ball.R > width)
+                    { 
+                        x = width - ball.R;
+                        vx *= -1;
+                    }
+                    if (y - ball.R < 0)
+                    { 
+                        y = ball.R;
+                        vy *= -1;
+                    }
+                    if (y + ball.R > height)
+                    { 
+                        y = height - ball.R;
+                        vy *= -1;
                     }
 
-                    // Check if balls are colliding
-                    if (distance <= a.R + b.R)
-                    {
-                        Physics.ResolveElasticCollision(a, b);
+                    return (ball, x, y, vx, vy);
+                })
+                .ToList();
 
-                        Physics.SeparateOverlappingBalls(a, b);
+            lock (_lock)
+            {
+                // Update ball positions and velocities after wall collision handling
+                foreach (var r in results)
+                {
+                    r.ball.X = r.x;
+                    r.ball.Y = r.y;
+                    r.ball.VelocityX = r.vx;
+                    r.ball.VelocityY = r.vy;
+                } 
+
+                // Handle ball collisions
+                for (int i = 0; i < ballList.Count; i++)
+                {
+                    for (int j = i + 1; j < ballList.Count; j++)
+                    {
+                        IBall a = ballList[i];
+                        IBall b = ballList[j];
+
+                        double distance = Physics.GetDistance(a, b);
+
+                        // Skip if distance is zero
+                        if (distance < 1e-10)
+                        {
+                            continue;
+                        }
+
+                        // Check if balls are colliding
+                        if (distance <= a.R + b.R)
+                        {
+                            Physics.ResolveElasticCollision(a, b);
+
+                            Physics.SeparateOverlappingBalls(a, b);
+                        }
                     }
                 }
             }
