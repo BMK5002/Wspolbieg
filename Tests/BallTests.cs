@@ -61,5 +61,28 @@ namespace PhysicsTests
             double expectedMass = Math.PI * 7.5 * 7.5;
             Assert.Equal(expectedMass, ball.Mass);
         }
+
+        [Fact]
+        public void bopyConstructorTest()
+        {
+            var original = new Ball(5.0, 10.0, 20.0, Math.PI / 3);
+
+            original.VelocityX = 3.5;
+            original.VelocityY = -2.5;
+
+            var copy = new Ball(original);
+
+            Assert.Equal(original.X, copy.X);
+            Assert.Equal(original.Y, copy.Y);
+            Assert.Equal(original.R, copy.R);
+            Assert.Equal(original.VelocityX, copy.VelocityX);
+            Assert.Equal(original.VelocityY, copy.VelocityY);
+
+            original.X += 100;
+            original.VelocityX += 10;
+
+            Assert.NotEqual(original.X, copy.X);
+            Assert.NotEqual(original.VelocityX, copy.VelocityX);
+        }
     }
 }

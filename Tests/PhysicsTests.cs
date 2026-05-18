@@ -74,7 +74,7 @@ namespace PhysicsTests
         }
 
         [Fact]
-        public void SeparateOverlappingBalls_CompletelyInside_MovesApart()
+        public void separateOverlappingBallsCompletelyInside()
         {
             var largeBall = new Ball { X = 0, Y = 0, R = 20 };
             var smallBall = new Ball { X = 5, Y = 5, R = 3 };
