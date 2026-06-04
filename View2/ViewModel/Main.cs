@@ -31,12 +31,14 @@ namespace View.ViewModel
         }
 
         public ICommand StartCommand { get; }
+        public ICommand StopCommand { get; }
 
 
         public MainViewModel(IBallService BallService)
         {
             _BallService = BallService;
             StartCommand = new RelayCommand(async _ => await Start());
+            StopCommand = new RelayCommand(async _ => await Stop());
         }
 
         private async Task Start()
