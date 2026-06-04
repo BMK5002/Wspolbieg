@@ -10,12 +10,11 @@ namespace View.ViewModel
     public class MainViewModel : INotifyPropertyChanged
     {
         private readonly IBallService _BallService;
-        private bool running;
-        private readonly object _lock = new object();
+        private BallSimulator? _simulator;
         private Task? _loopTask;
 
-        public ObservableCollection<Ball> Balls { get; } = new(); // For UI binding
-        private readonly List<Ball> simulationBalls = new();  // For simulation logic
+        public ObservableCollection<Ball> Balls { get; } = new();
+        private readonly List<Ball> simulationBalls = new();
 
         public double Width { get; set; } = 400;
         public double Height { get; set; } = 300;
@@ -42,11 +41,12 @@ namespace View.ViewModel
 
         private async Task Start()
         {
-            running = false; // Stop any existing simulation
-            if (_loopTask != null)
+            if (_simulator != null)
             {
-                await _loopTask; // Wait for the existing loop to finish
+                await _simulator.StopAsync();
+                _simulator = null;
             }
+
             Balls.Clear();
             simulationBalls.Clear();
             var rand = new Random();
@@ -61,32 +61,36 @@ namespace View.ViewModel
                 simulationBalls.Add(new Ball(radius, x, y, velocityAngle));
             }
 
-            running = true;
-            _loopTask = RunLoop();
+            _simulator = new BallSimulator(simulationBalls, _BallService, Width, Height);
+            _loopTask = _simulator.StartAsync();
+
+            _ = Task.Run(async () =>
+            {
+                while (_simulator != null)
+                {
+                    var snapshot = _simulator.GetSnapshot();
+                    await App.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        Balls.Clear();
+                        foreach (var ball in snapshot)
+                        {
+                            Balls.Add(ball);
+                        }
+                    });
+                    await Task.Delay(16);
+                }
+            });
         }
 
-        private async Task RunLoop()
+        private async Task Stop()
         {
-            while (running)
+            if (_simulator != null)
             {
-                List<Ball> snapshot;
-                lock (_lock)  // Ensure thread safety when updating the simulation
-                {
-                    _BallService.Update(simulationBalls, Width, Height);
-                    snapshot = simulationBalls.ToList();  // Create a snapshot for UI update
-                }
-
-                await App.Current.Dispatcher.InvokeAsync(() =>  // Update the UI with the snapshot
-                {
-                    Balls.Clear();
-                    foreach (var ball in snapshot)
-                    {
-                        Balls.Add(ball);
-                    }
-                });
-                await Task.Delay(16);
+                await _simulator.StopAsync();
+                _simulator = null;
             }
         }
+
 
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

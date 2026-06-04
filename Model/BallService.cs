@@ -8,42 +8,56 @@ namespace Model
         {
             var ballList = balls.ToList();
 
-            // Update positions
             foreach (var ball in ballList)
             {
-                ball.X += ball.VelocityX;
-                ball.Y += ball.VelocityY;
+                UpdateBallPosition(ball);
             }
 
-            // Handle wall collisions
             foreach (var ball in ballList)
             {
-                if (ball.X - ball.R < 0)
-                {
-                    ball.X = ball.R;
-                    ball.VelocityX *= -1;
-                }
-
-                if (ball.X + ball.R > width)
-                {
-                    ball.X = width - ball.R;
-                    ball.VelocityX *= -1;
-                }
-
-                if (ball.Y - ball.R < 0)
-                {
-                    ball.Y = ball.R;
-                    ball.VelocityY *= -1;
-                }
-
-                if (ball.Y + ball.R > height)
-                {
-                    ball.Y = height - ball.R;
-                    ball.VelocityY *= -1;
-                }
+                HandleWallCollisions(ball, width, height);
             }
 
-            // Handle ball collisions
+            HandleBallCollisions(ballList);
+        }
+
+        public void UpdateBallPosition(Ball ball)
+        {
+            ball.X += ball.VelocityX;
+            ball.Y += ball.VelocityY;
+        }
+
+        public void HandleWallCollisions(Ball ball, double width, double height)
+        {
+            if (ball.X - ball.R < 0)
+            {
+                ball.X = ball.R;
+                ball.VelocityX *= -1;
+            }
+
+            if (ball.X + ball.R > width)
+            {
+                ball.X = width - ball.R;
+                ball.VelocityX *= -1;
+            }
+
+            if (ball.Y - ball.R < 0)
+            {
+                ball.Y = ball.R;
+                ball.VelocityY *= -1;
+            }
+
+            if (ball.Y + ball.R > height)
+            {
+                ball.Y = height - ball.R;
+                ball.VelocityY *= -1;
+            }
+        }
+
+        public void HandleBallCollisions(IEnumerable<Ball> balls)
+        {
+            var ballList = balls.ToList();
+
             for (int i = 0; i < ballList.Count; i++)
             {
                 for (int j = i + 1; j < ballList.Count; j++)
@@ -53,13 +67,11 @@ namespace Model
 
                     double distance = Physics.GetDistance(a, b);
 
-                    // Skip if distance is zero
                     if (distance < 1e-10)
                     {
                         continue;
                     }
 
-                    // Check if balls are colliding
                     if (distance <= a.R + b.R)
                     {
                         Physics.ResolveElasticCollision(a, b);
