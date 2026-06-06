@@ -1,8 +1,10 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Windows.Input;
-using Data;
+﻿using Data;
+using Diagnostics;
 using Model;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Windows.Input;
 using View2;
 
 namespace View.ViewModel
@@ -12,6 +14,7 @@ namespace View.ViewModel
         private readonly IBallService _BallService;
         private BallSimulator? _simulator;
         private Task? _loopTask;
+        private readonly ILogger _logger;
 
         public ObservableCollection<Ball> Balls { get; } = new();
         private readonly List<Ball> simulationBalls = new();
@@ -37,6 +40,7 @@ namespace View.ViewModel
         public MainViewModel(IBallService BallService)
         {
             _BallService = BallService;
+            _logger = new Logger();
             StartCommand = new RelayCommand(async _ => await Start());
             StopCommand = new RelayCommand(async _ => await Stop());
         }
@@ -46,9 +50,10 @@ namespace View.ViewModel
             if (_simulator != null)
             {
                 await _simulator.StopAsync();
+                await _logger.StopAsync();
                 _simulator = null;
             }
-
+            await _logger.StartAsync();
             Balls.Clear();
             simulationBalls.Clear();
             var rand = new Random();
@@ -59,18 +64,42 @@ namespace View.ViewModel
                 double x = rand.Next((int)(radius + 1), (int)(Width - radius - 1));
                 double y = rand.Next((int)(radius + 1), (int)(Height - radius - 1));
                 double velocityAngle = rand.NextDouble() * 2 * Math.PI;
-
-                simulationBalls.Add(new Ball(radius, x, y, velocityAngle));
+                
+                var ball = new Ball(radius, x, y, velocityAngle);
+                simulationBalls.Add(ball);
+                DiagnosticsEntry entry = new DiagnosticsEntry
+                {
+                    Time = DateTime.Now,
+                    X = x,
+                    Y = y,
+                    VelocityX = ball.VelocityX,
+                    VelocityY = ball.VelocityY
+                };
+                _logger.Log(entry);
             }
 
             _simulator = new BallSimulator(simulationBalls, _BallService, Width, Height);
             _loopTask = _simulator.StartAsync();
-
             _ = Task.Run(async () =>
             {
                 while (_simulator != null)
                 {
                     var snapshot = _simulator.GetSnapshot();
+                    foreach (var ball in snapshot)
+                    {
+                        _logger.Log(new DiagnosticsEntry
+                        {
+                            Time = DateTime.Now,
+                            X = ball.X,
+                            Y = ball.Y,
+                            VelocityX = ball.VelocityX,
+                            VelocityY = ball.VelocityY
+                        });
+                    }
+                    if (App.Current == null)
+                    {
+                        return;
+                    }
                     await App.Current.Dispatcher.InvokeAsync(() =>
                     {
                         Balls.Clear();
@@ -89,6 +118,7 @@ namespace View.ViewModel
             if (_simulator != null)
             {
                 await _simulator.StopAsync();
+                await _logger.StopAsync();
                 _simulator = null;
             }
         }
