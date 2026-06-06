@@ -4,13 +4,13 @@ namespace Model
 {
     public class BallService : IBallService
     {
-        public void Update(IEnumerable<Ball> balls, double width, double height)
+        public void Update(IEnumerable<Ball> balls, double width, double height, double deltaTime)
         {
             var ballList = balls.ToList();
 
             foreach (var ball in ballList)
             {
-                UpdateBallPosition(ball);
+                UpdateBallPosition(ball, deltaTime);
             }
 
             foreach (var ball in ballList)
@@ -21,10 +21,10 @@ namespace Model
             HandleBallCollisions(ballList);
         }
 
-        public void UpdateBallPosition(Ball ball)
+        public void UpdateBallPosition(Ball ball, double deltaTime)
         {
-            ball.X += ball.VelocityX;
-            ball.Y += ball.VelocityY;
+            ball.X += ball.VelocityX * deltaTime;
+            ball.Y += ball.VelocityY * deltaTime;
         }
 
         public void HandleWallCollisions(Ball ball, double width, double height)

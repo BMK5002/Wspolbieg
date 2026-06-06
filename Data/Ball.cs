@@ -9,7 +9,7 @@ namespace Data
         private double y;
         private double r;
 
-        public const double InitialMomentum = 100.0;
+        public const double InitialMomentum = 3000.0;
 
         public double X
         {

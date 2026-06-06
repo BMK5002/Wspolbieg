@@ -1,4 +1,5 @@
 using Data;
+using System.Diagnostics;
 
 namespace Model
 {
@@ -11,6 +12,7 @@ namespace Model
         private CancellationTokenSource _cts = new();
         private readonly object _collisionLock = new object();
         private bool _running = false;
+        
 
         public BallSimulator(IEnumerable<Ball> balls, IBallService ballService, double width, double height)
         {
@@ -25,15 +27,21 @@ namespace Model
             return Task.Run(async () =>
             {
                 _running = true;
+                var stopWatch = new Stopwatch();
+                stopWatch.Start();
+                double lastTime = stopWatch.Elapsed.TotalSeconds;
 
                 try
                 {
                     while (_running && !_cts.IsCancellationRequested)
                     {
+                        double currentTime = stopWatch.Elapsed.TotalSeconds;
+                        double deltaTime = currentTime - lastTime;
+                        lastTime = currentTime;
                         var updateTasks = _balls.Select(ball =>
                             Task.Run(() =>
                             {
-                                _ballService.UpdateBallPosition(ball);
+                                _ballService.UpdateBallPosition(ball, deltaTime);
                                 _ballService.HandleWallCollisions(ball, _width, _height);
                             }, _cts.Token)
                         ).ToList();
