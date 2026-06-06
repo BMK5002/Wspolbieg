@@ -37,10 +37,10 @@ namespace View.ViewModel
         public ICommand StopCommand { get; }
 
 
-        public MainViewModel(IBallService BallService)
+        public MainViewModel(IBallService BallService, ILogger logger)
         {
             _BallService = BallService;
-            _logger = new Logger();
+            _logger = logger;
             StartCommand = new RelayCommand(async _ => await Start());
             StopCommand = new RelayCommand(async _ => await Stop());
         }
@@ -50,10 +50,8 @@ namespace View.ViewModel
             if (_simulator != null)
             {
                 await _simulator.StopAsync();
-                await _logger.StopAsync();
                 _simulator = null;
             }
-            await _logger.StartAsync();
             Balls.Clear();
             simulationBalls.Clear();
             var rand = new Random();
@@ -67,35 +65,15 @@ namespace View.ViewModel
                 
                 var ball = new Ball(radius, x, y, velocityAngle);
                 simulationBalls.Add(ball);
-                DiagnosticsEntry entry = new DiagnosticsEntry
-                {
-                    Time = DateTime.Now,
-                    X = x,
-                    Y = y,
-                    VelocityX = ball.VelocityX,
-                    VelocityY = ball.VelocityY
-                };
-                _logger.Log(entry);
             }
-
-            _simulator = new BallSimulator(simulationBalls, _BallService, Width, Height);
+            await _logger.StartAsync();
+            _simulator = new BallSimulator(simulationBalls, _BallService, Width, Height, _logger);
             _loopTask = _simulator.StartAsync();
             _ = Task.Run(async () =>
             {
                 while (_simulator != null)
                 {
                     var snapshot = _simulator.GetSnapshot();
-                    foreach (var ball in snapshot)
-                    {
-                        _logger.Log(new DiagnosticsEntry
-                        {
-                            Time = DateTime.Now,
-                            X = ball.X,
-                            Y = ball.Y,
-                            VelocityX = ball.VelocityX,
-                            VelocityY = ball.VelocityY
-                        });
-                    }
                     if (App.Current == null)
                     {
                         return;
@@ -118,8 +96,8 @@ namespace View.ViewModel
             if (_simulator != null)
             {
                 await _simulator.StopAsync();
-                await _logger.StopAsync();
                 _simulator = null;
+                await _logger.StopAsync();
             }
         }
 

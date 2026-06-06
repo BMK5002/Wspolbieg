@@ -1,4 +1,5 @@
 using Data;
+using Diagnostics;
 using System.Diagnostics;
 
 namespace Model
@@ -12,14 +13,16 @@ namespace Model
         private CancellationTokenSource _cts = new();
         private readonly object _collisionLock = new object();
         private bool _running = false;
-        
+        private readonly ILogger _logger;
 
-        public BallSimulator(IEnumerable<Ball> balls, IBallService ballService, double width, double height)
+
+        public BallSimulator(IEnumerable<Ball> balls, IBallService ballService, double width, double height, ILogger logger)
         {
             _balls = balls.ToList();
             _ballService = ballService;
             _width = width;
             _height = height;
+            _logger = logger;
         }
 
         public Task StartAsync()
@@ -48,9 +51,24 @@ namespace Model
 
                         await Task.WhenAll(updateTasks);
 
+                        List<DiagnosticsEntry> logs;
                         lock (_collisionLock)
                         {
                             _ballService.HandleBallCollisions(_balls);
+
+                            logs = _balls.Select(ball => new DiagnosticsEntry
+                            {
+                                Time = DateTime.Now,
+                                X = ball.X,
+                                Y = ball.Y,
+                                VelocityX = ball.VelocityX,
+                                VelocityY = ball.VelocityY
+                            }).ToList();
+                        }
+
+                        foreach (var log in logs)
+                        {
+                            _logger.Log(log);
                         }
 
                         await Task.Delay(16, _cts.Token);
