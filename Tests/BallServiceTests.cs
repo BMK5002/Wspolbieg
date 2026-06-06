@@ -11,7 +11,7 @@ namespace BallServiceTests
             var service = new BallService();
             var ball = new Ball { X = 10, Y = 10, VelocityX = 1, VelocityY = 1, R = 5 };
 
-            service.Update(new[] { ball }, 100, 100);
+            service.Update(new[] { ball }, 100, 100, 1);
 
             Assert.Equal(11, ball.X);
             Assert.Equal(11, ball.Y);
@@ -24,7 +24,7 @@ namespace BallServiceTests
 
             var ball = new Ball { X = 1, Y = 1, VelocityX = -5, VelocityY = -3, R = 5 };
 
-            service.Update(new[] { ball }, 100, 100);
+            service.Update(new[] { ball }, 100, 100, 1);
 
             Assert.Equal(5, ball.X);
             Assert.Equal(5, ball.Y);
@@ -38,7 +38,7 @@ namespace BallServiceTests
             var service = new BallService();
             var ball = new Ball { X = 95, Y = 96, VelocityX = 10, VelocityY = 10, R = 5 };
 
-            service.Update(new[] { ball }, 100, 100);
+            service.Update(new[] { ball }, 100, 100, 1);
 
             Assert.Equal(95, ball.X);
             Assert.Equal(95, ball.Y);

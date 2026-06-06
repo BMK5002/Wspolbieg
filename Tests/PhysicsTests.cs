@@ -167,7 +167,7 @@ namespace PhysicsTests
 
             for (int i = 0; i < 10; i++)
             {
-                service.Update(new[] { heavyBall, lightBall }, 500, 500);
+                service.Update(new[] { heavyBall, lightBall }, 500, 500, 1);
             }
 
             bool collisionOccurred = lightBall.VelocityX != lightVBefore;
@@ -190,7 +190,7 @@ namespace PhysicsTests
 
             for (int i = 0; i < 5; i++)
             {
-                service.Update(balls, 500, 500);
+                service.Update(balls, 500, 500, 1);
             }
 
             double finalMomentumX = balls.Sum(b => b.Mass * b.VelocityX);
