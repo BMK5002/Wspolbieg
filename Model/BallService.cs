@@ -7,7 +7,6 @@ namespace Model
         public void Update(IEnumerable<Ball> balls, double width, double height, double deltaTime)
         {
             var ballList = balls.ToList();
-            List<(IBall ball, double x, double y, double vx, double vy)> results;
 
             foreach (var ball in ballList)
             {
@@ -77,8 +76,7 @@ namespace Model
                     {
                         Physics.ResolveElasticCollision(a, b);
 
-                            Physics.SeparateOverlappingBalls(a, b);
-                        }
+                        Physics.SeparateOverlappingBalls(a, b);
                     }
                 }
             }
