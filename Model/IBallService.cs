@@ -4,8 +4,9 @@ namespace Model
 {
     public interface IBallService
     {
-        void Update( IEnumerable<IBall> balls, double width, double height);
-
-        IEnumerable<IBall> CreateBalls(int ballCount);
+        void Update(IEnumerable<Ball> balls, double width, double height, double deltaTime);
+        void UpdateBallPosition(Ball ball, double deltaTime);
+        void HandleWallCollisions(Ball ball, double width, double height);
+        void HandleBallCollisions(IEnumerable<Ball> balls);
     }
 }

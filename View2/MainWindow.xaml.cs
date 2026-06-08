@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using Model;
 using View.ViewModel;
+using Diagnostics;
 
 namespace View2
 {
@@ -10,7 +11,7 @@ namespace View2
         {
             InitializeComponent();
 
-            DataContext = new MainViewModel(new BallService());
+            DataContext = new MainViewModel(new BallService(), new Logger());
         }
     }
 }

@@ -20,6 +20,7 @@
             <TextBlock VerticalAlignment="Center" Foreground="Black">Liczba piłek:</TextBlock>
             <TextBox Width="60" Margin="6,0" Text="{Binding BallCount, UpdateSourceTrigger=PropertyChanged}" />
             <Button Content="Start" Command="{Binding StartCommand}" />
+            <Button Content="Stop" Command="{Binding StopCommand}" Margin="4,0,0,0"/>
         </StackPanel>
 
         <Canvas Grid.Row="1" Width="{Binding Width}" Height="{Binding Height}" Background="Black">

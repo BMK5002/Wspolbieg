@@ -11,20 +11,20 @@ namespace BallServiceTests
             var service = new BallService();
             var ball = new Ball { X = 10, Y = 10, VelocityX = 1, VelocityY = 1, R = 5 };
 
-            service.Update(new[] { ball }, 100, 100);
+            service.Update(new[] { ball }, 100, 100, 1);
 
             Assert.Equal(11, ball.X);
             Assert.Equal(11, ball.Y);
         }
 
         [Fact]
-        public void ballDoesNotLeaveLeftOrTop()
+        public void ballDoesNotLeaveLeftOrTopTest()
         {
             var service = new BallService();
 
             var ball = new Ball { X = 1, Y = 1, VelocityX = -5, VelocityY = -3, R = 5 };
 
-            service.Update(new[] { ball }, 100, 100);
+            service.Update(new[] { ball }, 100, 100, 1);
 
             Assert.Equal(5, ball.X);
             Assert.Equal(5, ball.Y);
@@ -33,12 +33,12 @@ namespace BallServiceTests
         }
 
         [Fact]
-        public void ballDoesNotLeaveRightOrBottom()
+        public void ballDoesNotLeaveRightOrBottomTest()
         {
             var service = new BallService();
             var ball = new Ball { X = 95, Y = 96, VelocityX = 10, VelocityY = 10, R = 5 };
 
-            service.Update(new[] { ball }, 100, 100);
+            service.Update(new[] { ball }, 100, 100, 1);
 
             Assert.Equal(95, ball.X);
             Assert.Equal(95, ball.Y);
@@ -47,21 +47,23 @@ namespace BallServiceTests
         }
 
         [Fact]
-        public void createBallsTest()
+        public void deltaTimeTest()
         {
             var service = new BallService();
-            int count = 25;
-            var balls = service.CreateBalls(count).ToList();
 
-            Assert.Equal(count, balls.Count);
-            foreach (var ball in balls)
+            var ball = new Ball
             {
-                Assert.True(ball.R > 0);
-                Assert.True(ball.X >= 0);
-                Assert.True(ball.Y >= 0);
+                X = 0,
+                Y = 0,
+                VelocityX = 10,
+                VelocityY = 5,
+                R = 5
+            };
 
-                Assert.True(ball.VelocityX != 0 || ball.VelocityY != 0);
-            }
+            service.UpdateBallPosition(ball, 2.0);
+
+            Assert.Equal(20, ball.X);
+            Assert.Equal(10, ball.Y);
         }
     }
 }
