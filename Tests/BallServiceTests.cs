@@ -6,7 +6,7 @@ namespace BallServiceTests
     public class BallServiceTests
     {
         [Fact]
-        public void BallMoveTest()
+        public void ballMoveTest()
         {
             var service = new BallService();
             var ball = new Ball { X = 10, Y = 10, VelocityX = 1, VelocityY = 1, R = 5 };
@@ -18,7 +18,7 @@ namespace BallServiceTests
         }
 
         [Fact]
-        public void BallDoesNotLeaveLeftOrTop()
+        public void ballDoesNotLeaveLeftOrTopTest()
         {
             var service = new BallService();
 
@@ -33,7 +33,7 @@ namespace BallServiceTests
         }
 
         [Fact]
-        public void BallDoesNotLeaveRightOrBottom()
+        public void ballDoesNotLeaveRightOrBottomTest()
         {
             var service = new BallService();
             var ball = new Ball { X = 95, Y = 96, VelocityX = 10, VelocityY = 10, R = 5 };
@@ -44,6 +44,26 @@ namespace BallServiceTests
             Assert.Equal(95, ball.Y);
             Assert.Equal(-10, ball.VelocityX);
             Assert.Equal(-10, ball.VelocityY);
+        }
+
+        [Fact]
+        public void deltaTimeTest()
+        {
+            var service = new BallService();
+
+            var ball = new Ball
+            {
+                X = 0,
+                Y = 0,
+                VelocityX = 10,
+                VelocityY = 5,
+                R = 5
+            };
+
+            service.UpdateBallPosition(ball, 2.0);
+
+            Assert.Equal(20, ball.X);
+            Assert.Equal(10, ball.Y);
         }
     }
 }
