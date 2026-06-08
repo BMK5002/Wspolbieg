@@ -1,6 +1,5 @@
 <Solution>
   <Project Path="Data/Data.csproj" />
-  <Project Path="Diagnostics/Diagnostics.csproj" Id="276e4267-65cb-427b-82ce-9d62c70d5032" />
   <Project Path="Model/Model.csproj" />
   <Project Path="Tests/Tests.csproj" />
   <Project Path="View2/View.csproj" Id="ff5c31e7-4325-477c-8faa-153ff30a3f23" />
