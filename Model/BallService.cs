@@ -65,19 +65,24 @@ namespace Model
                     Ball a = ballList[i];
                     Ball b = ballList[j];
 
-                        double distance = Physics.GetDistance(a, b);
+                    lock (a._ballLock){
+                        lock (b._ballLock)
+                        {
+                            double distance = Physics.GetDistance(a, b);
 
-                    if (distance < 1e-10)
-                    {
-                        continue;
-                    }
+                            if (distance < 1e-10)
+                            {
+                                continue;
+                            }
 
-                    if (distance <= a.R + b.R)
-                    {
-                        Physics.ResolveElasticCollision(a, b);
+                            if (distance <= a.R + b.R)
+                            {
+                                Physics.ResolveElasticCollision(a, b);
 
-                        Physics.SeparateOverlappingBalls(a, b);
-                    }
+                                Physics.SeparateOverlappingBalls(a, b);
+                            }
+                        }
+                     }
                 }
             }
         }

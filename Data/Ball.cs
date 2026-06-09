@@ -57,8 +57,11 @@ namespace Data
 
         public double Mass => Math.PI * R * R;
 
+        public Lock _ballLock;
+
         public Ball()
         {
+            _ballLock = new Lock();
         }
 
         public Ball(double radius, double x = 0, double y = 0, double velocityAngle = 0)
@@ -72,6 +75,7 @@ namespace Data
 
             VelocityX = speed * Math.Cos(velocityAngle);
             VelocityY = speed * Math.Sin(velocityAngle);
+            _ballLock = new Lock();
         }
 
         // Konstruktor kopiujący
@@ -82,6 +86,7 @@ namespace Data
             R = other.R;
             VelocityX = other.VelocityX;
             VelocityY = other.VelocityY;
+            _ballLock = new Lock();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

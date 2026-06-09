@@ -11,9 +11,9 @@ namespace Model
         private readonly double _width;
         private readonly double _height;
         private CancellationTokenSource _cts = new();
-        private readonly object _collisionLock = new object();
         private bool _running = false;
         private readonly ILogger _logger;
+        private Timer? _timer;
 
 
         public BallSimulator(IEnumerable<Ball> balls, IBallService ballService, double width, double height, ILogger logger)
@@ -27,58 +27,47 @@ namespace Model
 
         public Task StartAsync()
         {
-            return Task.Run(async () =>
+            _running = true;
+
+            const double deltaTime = 0.016;
+
+            _timer = new Timer(_ =>
             {
-                _running = true;
-                var stopWatch = new Stopwatch();
-                stopWatch.Start();
-                double lastTime = stopWatch.Elapsed.TotalSeconds;
+                if (!_running || _cts.IsCancellationRequested)
+                    return;
 
-                try
-                {
-                    while (_running && !_cts.IsCancellationRequested)
+                var updateTasks = _balls.Select(ball =>
+                    Task.Run(() =>
                     {
-                        double currentTime = stopWatch.Elapsed.TotalSeconds;
-                        double deltaTime = currentTime - lastTime;
-                        lastTime = currentTime;
-                        var updateTasks = _balls.Select(ball =>
-                            Task.Run(() =>
-                            {
-                                _ballService.UpdateBallPosition(ball, deltaTime);
-                                _ballService.HandleWallCollisions(ball, _width, _height);
-                            }, _cts.Token)
-                        ).ToList();
+                        _ballService.UpdateBallPosition(ball, deltaTime);
+                        _ballService.HandleWallCollisions(ball, _width, _height);
+                    }, _cts.Token)
+                ).ToList();
 
-                        await Task.WhenAll(updateTasks);
+                Task.WaitAll(updateTasks.ToArray());
 
-                        List<DiagnosticsEntry> logs;
-                        lock (_collisionLock)
-                        {
-                            _ballService.HandleBallCollisions(_balls);
+                List<DiagnosticsEntry> logs;
 
-                            logs = _balls.Select(ball => new DiagnosticsEntry
-                            {
-                                Time = DateTime.Now,
-                                X = ball.X,
-                                Y = ball.Y,
-                                VelocityX = ball.VelocityX,
-                                VelocityY = ball.VelocityY
-                            }).ToList();
-                        }
+                _ballService.HandleBallCollisions(_balls);
 
-                        foreach (var log in logs)
-                        {
-                            _logger.Log(log);
-                        }
-
-                        await Task.Delay(16, _cts.Token);
-                    }
-                }
-                catch (OperationCanceledException)
+                logs = _balls.Select(ball => new DiagnosticsEntry
                 {
-                    // Simulation was cancelled
+                    Time = DateTime.Now,
+                    X = ball.X,
+                    Y = ball.Y,
+                    VelocityX = ball.VelocityX,
+                    VelocityY = ball.VelocityY
+                }).ToList();
+                
+
+                foreach (var log in logs)
+                {
+                    _logger.Log(log);
                 }
-            }, _cts.Token);
+
+            }, null, 0, 16);
+
+            return Task.CompletedTask;
         }
 
         public async Task StopAsync()
@@ -94,16 +83,19 @@ namespace Model
 
         public List<Ball> GetSnapshot()
         {
-            lock (_collisionLock)
+            List<Ball> ballTemp = new List<Ball>();
+            foreach (var ball in _balls)
             {
-                return _balls.Select(ball =>
-                    new Ball(ball.R, ball.X, ball.Y)
+                lock (ball._ballLock)
+                {
+                    ballTemp.Add(new Ball(ball.R, ball.X, ball.Y)
                     {
                         VelocityX = ball.VelocityX,
                         VelocityY = ball.VelocityY
-                    }
-                ).ToList();
+                    });
+                }
             }
+            return ballTemp.ToList();
         }
     }
 }
